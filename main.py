@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
@@ -5,13 +6,18 @@ from sqlalchemy import Integer, String, Float
 
 app = Flask(__name__)
 
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+INSTANCE_DIR = os.path.join(os.path.expanduser("~"), "AppData", "Local", "Temp", "library_project")
+os.makedirs(INSTANCE_DIR, exist_ok=True)
+
 
 # CREATE DATABASE
 class Base(DeclarativeBase):
     pass
 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///books.db"
+db_path = os.path.join(INSTANCE_DIR, 'books.db').replace('\\', '/')
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 # Create the extension
 db = SQLAlchemy(model_class=Base)
 # initialise the app with the extension
